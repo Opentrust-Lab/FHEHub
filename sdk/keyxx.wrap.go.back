@@ -1,0 +1,1045 @@
+package sdk
+
+// #include <stdlib.h>
+
+import (
+	"C"
+	"unsafe"
+	"syscall"
+)
+
+type Windows_SDK struct {
+	UserKey string
+	libPath string
+	keyxx *syscall.DLL
+}
+
+func (sdk *Windows_SDK) getIntPtr(val int) uintptr {
+	return uintptr(val)
+}
+
+func (sdk *Windows_SDK) getCIntPtr(val int) uintptr {
+	return uintptr(C.int(val))
+}
+
+func (sdk *Windows_SDK) getStrPtr(val string) uintptr {
+	return uintptr(unsafe.Pointer(&val))
+}
+
+func (sdk *Windows_SDK) getCStrPtr(val string) uintptr {
+	return uintptr(unsafe.Pointer(C.CString(val)))
+}
+
+func (sdk *Windows_SDK) getFloat64Ptr(val float64) uintptr {
+	return uintptr(*(*uint64)(unsafe.Pointer(&val)))
+}
+
+func (sdk *Windows_SDK) getCFloat64Ptr(val float64) uintptr {
+	return *(*uintptr)(unsafe.Pointer(&val))
+}
+
+func (sdk *Windows_SDK) getReturnString(ptr uintptr) string {
+	return C.GoString((*C.char)(unsafe.Pointer(ptr)))
+}
+
+func (sdk *Windows_SDK) getReturnGoString(ptr uintptr) string {
+	return string(ptr)
+}
+
+func (sdk *Windows_SDK) getReturnFloat64(ptr uintptr) float64 {
+	u := uint64(ptr)
+    return *(*float64)(unsafe.Pointer(&u))
+}
+
+func (sdk *Windows_SDK) SetLibPath(libPath_in string) {
+	sdk.libPath = libPath_in
+}
+
+func (sdk *Windows_SDK) InitLib() {
+	var err error
+	if sdk.libPath == "" {
+		sdk.libPath = "keyxx.core.dll"
+	}
+	sdk.keyxx, err = syscall.LoadDLL(sdk.libPath)
+	if err != nil {
+		panic("LoadLibrary failed: " + err.Error() + "\n")
+	} else {
+		println("LoadLibrary Success...\n")
+	}
+}
+
+func (sdk *Windows_SDK) Release() {
+	sdk.keyxx.Release()
+}
+
+func (sdk *Windows_SDK) Init(m_in int, n_in int, q_in int, p_in int)  {
+	p0 := sdk.getCIntPtr(m_in)
+	p1 := sdk.getCIntPtr(n_in)
+	p2 := sdk.getCIntPtr(q_in)
+	p3 := sdk.getCIntPtr(p_in)
+	proc, _ := sdk.keyxx.FindProc("Init")
+	proc.Call(p0, p1, p2, p3)
+}
+
+func (sdk *Windows_SDK) InitCodeType(ct int)  {
+	p0 := sdk.getCIntPtr(ct)
+	proc, _ := sdk.keyxx.FindProc("InitCodeType")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) InitSerializeType(st int)  {
+	p0 := sdk.getCIntPtr(st)
+	proc, _ := sdk.keyxx.FindProc("InitSerializeType")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) InitStrCaseChangeMode(scc int)  {
+	p0 := sdk.getCIntPtr(scc)
+	proc, _ := sdk.keyxx.FindProc("InitStrCaseChangeMode")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) InitIsFastString(iss int)  {
+	p0 := sdk.getCIntPtr(iss)
+	proc, _ := sdk.keyxx.FindProc("InitIsFastString")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) SM3(input string) string {
+	p0 := sdk.getCStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("SM3")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SM3_GO(input string) string {
+	p0 := sdk.getStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("SM3_GO")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnGoString(r)
+}
+
+func (sdk *Windows_SDK) LoadPrivKey(skbfile string)  {
+	p0 := sdk.getCStrPtr(skbfile)
+	proc, _ := sdk.keyxx.FindProc("LoadPrivKey")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadPubKey(pkbfile string)  {
+	p0 := sdk.getCStrPtr(pkbfile)
+	proc, _ := sdk.keyxx.FindProc("LoadPubKey")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadDictionary(dictbfile string)  {
+	p0 := sdk.getCStrPtr(dictbfile)
+	proc, _ := sdk.keyxx.FindProc("LoadDictionary")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadPrivKeyString(skbstring string)  {
+	p0 := sdk.getCStrPtr(skbstring)
+	proc, _ := sdk.keyxx.FindProc("LoadPrivKeyString")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadPubKeyString(pkbstring string)  {
+	p0 := sdk.getCStrPtr(pkbstring)
+	proc, _ := sdk.keyxx.FindProc("LoadPubKeyString")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadDictionaryString(dictbstring string)  {
+	p0 := sdk.getCStrPtr(dictbstring)
+	proc, _ := sdk.keyxx.FindProc("LoadDictionaryString")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadBiasKey(bkfile string)  {
+	p0 := sdk.getCStrPtr(bkfile)
+	proc, _ := sdk.keyxx.FindProc("LoadBiasKey")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadExKey(dictExbfile string)  {
+	p0 := sdk.getCStrPtr(dictExbfile)
+	proc, _ := sdk.keyxx.FindProc("LoadExKey")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadPrivkeyFloat(skffile string)  {
+	p0 := sdk.getCStrPtr(skffile)
+	proc, _ := sdk.keyxx.FindProc("LoadPrivkeyFloat")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadDictionaryFloat(dictffile string)  {
+	p0 := sdk.getCStrPtr(dictffile)
+	proc, _ := sdk.keyxx.FindProc("LoadDictionaryFloat")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) LoadExpressionBlockKeys()  {
+	proc, _ := sdk.keyxx.FindProc("LoadExpressionBlockKeys")
+	proc.Call()
+}
+
+func (sdk *Windows_SDK) LoadExpressionFloatKeys()  {
+	proc, _ := sdk.keyxx.FindProc("LoadExpressionFloatKeys")
+	proc.Call()
+}
+
+func (sdk *Windows_SDK) InitExpression()  {
+	proc, _ := sdk.keyxx.FindProc("InitExpression")
+	proc.Call()
+}
+
+func (sdk *Windows_SDK) ClearExpressionVariable()  {
+	proc, _ := sdk.keyxx.FindProc("ClearExpressionVariable")
+	proc.Call()
+}
+
+func (sdk *Windows_SDK) AddExpressionVariable(_name string, _type string, _value string)  {
+	p0 := sdk.getCStrPtr(_name)
+	p1 := sdk.getCStrPtr(_type)
+	p2 := sdk.getCStrPtr(_value)
+	proc, _ := sdk.keyxx.FindProc("AddExpressionVariable")
+	proc.Call(p0, p1, p2)
+}
+
+func (sdk *Windows_SDK) ExpressionCalculation(formula string) string {
+	p0 := sdk.getCStrPtr(formula)
+	proc, _ := sdk.keyxx.FindProc("ExpressionCalculation")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) GenSKB(m int, n int, q int, p int, filename string)  {
+	p0 := sdk.getCIntPtr(m)
+	p1 := sdk.getCIntPtr(n)
+	p2 := sdk.getCIntPtr(q)
+	p3 := sdk.getCIntPtr(p)
+	p4 := sdk.getCStrPtr(filename)
+	proc, _ := sdk.keyxx.FindProc("GenSKB")
+	proc.Call(p0, p1, p2, p3, p4)
+}
+
+func (sdk *Windows_SDK) GenPKB(skbfile string, filename string)  {
+	p0 := sdk.getCStrPtr(skbfile)
+	p1 := sdk.getCStrPtr(filename)
+	proc, _ := sdk.keyxx.FindProc("GenPKB")
+	proc.Call(p0, p1)
+}
+
+func (sdk *Windows_SDK) GenDictB(skbfile string, filename string, delta float64)  {
+	p0 := sdk.getCStrPtr(skbfile)
+	p1 := sdk.getCStrPtr(filename)
+	p2 := sdk.getCFloat64Ptr(delta)
+	proc, _ := sdk.keyxx.FindProc("GenDictB")
+	proc.Call(p0, p1, p2)
+}
+
+func (sdk *Windows_SDK) GenSKBString(m int, n int, q int, p int) string {
+	p0 := sdk.getCIntPtr(m)
+	p1 := sdk.getCIntPtr(n)
+	p2 := sdk.getCIntPtr(q)
+	p3 := sdk.getCIntPtr(p)
+	proc, _ := sdk.keyxx.FindProc("GenSKBString")
+	r, _, _ := proc.Call(p0, p1, p2, p3)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) GenPKBString(skbfile string) string {
+	p0 := sdk.getCStrPtr(skbfile)
+	proc, _ := sdk.keyxx.FindProc("GenPKBString")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) GenDictBString(skbfile string, delta float64) string {
+	p0 := sdk.getCStrPtr(skbfile)
+	p1 := sdk.getCFloat64Ptr(delta)
+	proc, _ := sdk.keyxx.FindProc("GenDictBString")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) GenBK(n int, q int, p int, filename string)  {
+	p0 := sdk.getCIntPtr(n)
+	p1 := sdk.getCIntPtr(q)
+	p2 := sdk.getCIntPtr(p)
+	p3 := sdk.getCStrPtr(filename)
+	proc, _ := sdk.keyxx.FindProc("GenBK")
+	proc.Call(p0, p1, p2, p3)
+}
+
+func (sdk *Windows_SDK) GenDictExB(bkfile string, pkbfile string, dictbfile string, filename string)  {
+	p0 := sdk.getCStrPtr(bkfile)
+	p1 := sdk.getCStrPtr(pkbfile)
+	p2 := sdk.getCStrPtr(dictbfile)
+	p3 := sdk.getCStrPtr(filename)
+	proc, _ := sdk.keyxx.FindProc("GenDictExB")
+	proc.Call(p0, p1, p2, p3)
+}
+
+func (sdk *Windows_SDK) GenSKF(p int, filename string)  {
+	p0 := sdk.getCIntPtr(p)
+	p1 := sdk.getCStrPtr(filename)
+	proc, _ := sdk.keyxx.FindProc("GenSKF")
+	proc.Call(p0, p1)
+}
+
+func (sdk *Windows_SDK) GenDictF(skffile string, filename string)  {
+	p0 := sdk.getCStrPtr(skffile)
+	p1 := sdk.getCStrPtr(filename)
+	proc, _ := sdk.keyxx.FindProc("GenDictF")
+	proc.Call(p0, p1)
+}
+
+func (sdk *Windows_SDK) EncInt(plain int) string {
+	p0 := sdk.getCIntPtr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncInt")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncPubInt(plain int) string {
+	p0 := sdk.getCIntPtr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncPubInt")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncString(plain string) string {
+	p0 := sdk.getCStrPtr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncString")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncPubString(plain string) string {
+	p0 := sdk.getCStrPtr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncPubString")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncPubStringWithIndex(plain string) string {
+	p0 := sdk.getCStrPtr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncPubStringWithIndex")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncFloat(plain float64) string {
+	p0 := sdk.getCFloat64Ptr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncDouble(plain float64) string {
+	p0 := sdk.getCFloat64Ptr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncPubDouble(plain float64) string {
+	p0 := sdk.getCFloat64Ptr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncPubDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncBinary(plain int, l int) string {
+	p0 := sdk.getCIntPtr(plain)
+	p1 := sdk.getCIntPtr(l)
+	proc, _ := sdk.keyxx.FindProc("EncBinary")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncPubBinary(plain int, l int) string {
+	p0 := sdk.getCIntPtr(plain)
+	p1 := sdk.getCIntPtr(l)
+	proc, _ := sdk.keyxx.FindProc("EncPubBinary")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) DecInt(input string) int {
+	p0 := sdk.getCStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("DecInt")
+	r, _, _ := proc.Call(p0)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) DecFloat(input string) float64 {
+	p0 := sdk.getCStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("DecFloat")
+	_, r, _ := proc.Call(p0)
+	return sdk.getReturnFloat64(r)
+}
+
+func (sdk *Windows_SDK) DecDouble(input string) float64 {
+	p0 := sdk.getCStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("DecDouble")
+	_, r, _ := proc.Call(p0)
+	return sdk.getReturnFloat64(r)
+}
+
+func (sdk *Windows_SDK) Decrypt(input string) string {
+	p0 := sdk.getCStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("Decrypt")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) DecBinary(input string) int {
+	p0 := sdk.getCStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("DecBinary")
+	r, _, _ := proc.Call(p0)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) GenSign(input string) string {
+	p0 := sdk.getCStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("GenSign")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) VerifySign(input string, sign string) int {
+	p0 := sdk.getCStrPtr(input)
+	p1 := sdk.getCStrPtr(sign)
+	proc, _ := sdk.keyxx.FindProc("VerifySign")
+	r, _, _ := proc.Call(p0, p1)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) AddCipherInt(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("AddCipherInt")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SubCipherInt(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("SubCipherInt")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) MulCipherInt(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("MulCipherInt")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) AddCipherFloat(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("AddCipherFloat")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SubCipherFloat(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("SubCipherFloat")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) MulCipherFloat(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("MulCipherFloat")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) DivCipherFloat(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("DivCipherFloat")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) AddCipherDouble(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("AddCipherDouble")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SubCipherDouble(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("SubCipherDouble")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) MulCipherDouble(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("MulCipherDouble")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) DivCipherDouble(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("DivCipherDouble")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) XORCipherBinary(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("XORCipherBinary")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ANDCipherBinary(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("ANDCipherBinary")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ORCipherBinary(c1 string, c2 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("ORCipherBinary")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) NOTCipherBinary(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("NOTCipherBinary")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ShiftLeftCipherBinary(c1 string, _bias int) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCIntPtr(_bias)
+	proc, _ := sdk.keyxx.FindProc("ShiftLeftCipherBinary")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ShiftRightCipherBinary(c1 string, _bias int) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCIntPtr(_bias)
+	proc, _ := sdk.keyxx.FindProc("ShiftRightCipherBinary")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) CompareCipherInt(c1 string, c2 string) int {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("CompareCipherInt")
+	r, _, _ := proc.Call(p0, p1)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) CompareCipherString(c1 string, c2 string) int {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("CompareCipherString")
+	r, _, _ := proc.Call(p0, p1)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) CompareCipherFloat(c1 string, c2 string) int {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("CompareCipherFloat")
+	r, _, _ := proc.Call(p0, p1)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) CompareCipherDouble(c1 string, c2 string) int {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	proc, _ := sdk.keyxx.FindProc("CompareCipherDouble")
+	r, _, _ := proc.Call(p0, p1)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) ABSCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ABSCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) PowCipherFloat(c1 string, n int) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCIntPtr(n)
+	proc, _ := sdk.keyxx.FindProc("PowCipherFloat")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SqrtCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("SqrtCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) PowCipherFloat_FractionOrder(c1 string, n int, m int) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCIntPtr(n)
+	p2 := sdk.getCIntPtr(m)
+	proc, _ := sdk.keyxx.FindProc("PowCipherFloat_FractionOrder")
+	r, _, _ := proc.Call(p0, p1, p2)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) PowCipherFloat_RealOrder(c1 string, a float64) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCFloat64Ptr(a)
+	proc, _ := sdk.keyxx.FindProc("PowCipherFloat_RealOrder")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) LogCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("LogCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ExpCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ExpCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SinCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("SinCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) CosCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("CosCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) TanCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("TanCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArcsinCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArcsinCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArccosCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArccosCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArctanCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArctanCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SinhCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("SinhCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) CoshCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("CoshCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) TanhCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("TanhCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArcsinhCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArcsinhCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArccoshCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArccoshCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArctanhCipherFloat(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArctanhCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ABSCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ABSCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) PowCipherDouble(c1 string, n int) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCIntPtr(n)
+	proc, _ := sdk.keyxx.FindProc("PowCipherDouble")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SqrtCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("SqrtCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) PowCipherDouble_FractionOrder(c1 string, n int, m int) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCIntPtr(n)
+	p2 := sdk.getCIntPtr(m)
+	proc, _ := sdk.keyxx.FindProc("PowCipherDouble_FractionOrder")
+	r, _, _ := proc.Call(p0, p1, p2)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) PowCipherDouble_RealOrder(c1 string, a float64) string {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCFloat64Ptr(a)
+	proc, _ := sdk.keyxx.FindProc("PowCipherDouble_RealOrder")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) LogCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("LogCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ExpCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ExpCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SinCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("SinCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) CosCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("CosCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) TanCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("TanCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArcsinCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArcsinCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArccosCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArccosCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArctanCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArctanCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SinhCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("SinhCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) CoshCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("CoshCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) TanhCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("TanhCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArcsinhCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArcsinhCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArccoshCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArccoshCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ArctanhCipherDouble(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("ArctanhCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) ConcatString(data1 string, data2 string) string {
+	p0 := sdk.getCStrPtr(data1)
+	p1 := sdk.getCStrPtr(data2)
+	proc, _ := sdk.keyxx.FindProc("ConcatString")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) Substring(data string, start int, _end int) string {
+	p0 := sdk.getCStrPtr(data)
+	p1 := sdk.getCIntPtr(start)
+	p2 := sdk.getCIntPtr(_end)
+	proc, _ := sdk.keyxx.FindProc("Substring")
+	r, _, _ := proc.Call(p0, p1, p2)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncPubIntExtend(plain int) string {
+	p0 := sdk.getCIntPtr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncPubIntExtend")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EncPubStringExtend(plain string) string {
+	p0 := sdk.getCStrPtr(plain)
+	proc, _ := sdk.keyxx.FindProc("EncPubStringExtend")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) TranEN(cipher string) string {
+	p0 := sdk.getCStrPtr(cipher)
+	proc, _ := sdk.keyxx.FindProc("TranEN")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) TranStringEN(_cs string) string {
+	p0 := sdk.getCStrPtr(_cs)
+	proc, _ := sdk.keyxx.FindProc("TranStringEN")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) DecStringNormal(_cs string) string {
+	p0 := sdk.getCStrPtr(_cs)
+	proc, _ := sdk.keyxx.FindProc("DecStringNormal")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) DecString(cs string) string {
+	p0 := sdk.getCStrPtr(cs)
+	proc, _ := sdk.keyxx.FindProc("DecString")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) TranStringENMix(_cs string) string {
+	p0 := sdk.getCStrPtr(_cs)
+	proc, _ := sdk.keyxx.FindProc("TranStringENMix")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) AddByteExtend(cipher1 string, cipher2 string) string {
+	p0 := sdk.getCStrPtr(cipher1)
+	p1 := sdk.getCStrPtr(cipher2)
+	proc, _ := sdk.keyxx.FindProc("AddByteExtend")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) SubstractByteExtend(cipher1 string, cipher2 string) string {
+	p0 := sdk.getCStrPtr(cipher1)
+	p1 := sdk.getCStrPtr(cipher2)
+	proc, _ := sdk.keyxx.FindProc("SubstractByteExtend")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) MultiplyByteExtend(cipher1 string, cipher2 string) string {
+	p0 := sdk.getCStrPtr(cipher1)
+	p1 := sdk.getCStrPtr(cipher2)
+	proc, _ := sdk.keyxx.FindProc("MultiplyByteExtend")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EqualByteExtend(cipher1 string, cipher2 string) string {
+	p0 := sdk.getCStrPtr(cipher1)
+	p1 := sdk.getCStrPtr(cipher2)
+	proc, _ := sdk.keyxx.FindProc("EqualByteExtend")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) CatCipherStringMix(_cs1 string, _cs2 string) string {
+	p0 := sdk.getCStrPtr(_cs1)
+	p1 := sdk.getCStrPtr(_cs2)
+	proc, _ := sdk.keyxx.FindProc("CatCipherStringMix")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) EqualStringExtend(_cs1 string, _cs2 string) string {
+	p0 := sdk.getCStrPtr(_cs1)
+	p1 := sdk.getCStrPtr(_cs2)
+	proc, _ := sdk.keyxx.FindProc("EqualStringExtend")
+	r, _, _ := proc.Call(p0, p1)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) FreePoint(cs string)  {
+	p0 := uintptr(*(*byte)(unsafe.Pointer(&cs)))
+	proc, _ := sdk.keyxx.FindProc("FreePoint")
+	proc.Call(p0)
+}
+
+func (sdk *Windows_SDK) IsCipher(cipherstr string) int {
+	p0 := sdk.getCStrPtr(cipherstr)
+	proc, _ := sdk.keyxx.FindProc("IsCipher")
+	r, _, _ := proc.Call(p0)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) IsCipherInt(cipherstr string) int {
+	p0 := sdk.getCStrPtr(cipherstr)
+	proc, _ := sdk.keyxx.FindProc("IsCipherInt")
+	r, _, _ := proc.Call(p0)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) IsCipherFloat(cipherstr string) int {
+	p0 := sdk.getCStrPtr(cipherstr)
+	proc, _ := sdk.keyxx.FindProc("IsCipherFloat")
+	r, _, _ := proc.Call(p0)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) IsCipherDouble(cipherstr string) int {
+	p0 := sdk.getCStrPtr(cipherstr)
+	proc, _ := sdk.keyxx.FindProc("IsCipherDouble")
+	r, _, _ := proc.Call(p0)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) IsCipherString(cipherstr string) int {
+	p0 := sdk.getCStrPtr(cipherstr)
+	proc, _ := sdk.keyxx.FindProc("IsCipherString")
+	r, _, _ := proc.Call(p0)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) IsCipherStringWithIndex(cipherstr string) int {
+	p0 := sdk.getCStrPtr(cipherstr)
+	proc, _ := sdk.keyxx.FindProc("IsCipherStringWithIndex")
+	r, _, _ := proc.Call(p0)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) CompareStringWithIndex(c1 string, c2 string, max int) int {
+	p0 := sdk.getCStrPtr(c1)
+	p1 := sdk.getCStrPtr(c2)
+	p2 := sdk.getCIntPtr(max)
+	proc, _ := sdk.keyxx.FindProc("CompareStringWithIndex")
+	r, _, _ := proc.Call(p0, p1, p2)
+	return int(C.int(r))
+}
+
+func (sdk *Windows_SDK) EncStringWithIndex(c1 string) string {
+	p0 := sdk.getCStrPtr(c1)
+	proc, _ := sdk.keyxx.FindProc("EncStringWithIndex")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
+
+func (sdk *Windows_SDK) DecStringWithIndex(input string) string {
+	p0 := sdk.getCStrPtr(input)
+	proc, _ := sdk.keyxx.FindProc("DecStringWithIndex")
+	r, _, _ := proc.Call(p0)
+	return sdk.getReturnString(r)
+}
